@@ -32,7 +32,7 @@ http://www.modrails.com/documentation/Users%20guide%20Apache.html
 Unicorn nginx:
 http://sirupsen.com/setting-up-unicorn-with-nginx/
 
-James Griffis Results and explinations.
+James Griffis Results and Explanations
 =============
 
 I have tried to keep this playbook as simple as possible while also trying to use Ansibles core/extra modules before writing scripts,
