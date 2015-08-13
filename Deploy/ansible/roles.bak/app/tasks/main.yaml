@@ -1,0 +1,59 @@
+- name: Install system packages
+  yum: name={{ item }} state=installed
+  with_items:
+     - ruby
+     - gcc
+     - rubygems
+     - gcc-c++
+     - ruby-devel
+     - libxslt-devel
+     - libxml2-devel
+     - sqlite-devel
+     - patch
+     - pygpgme
+     - curl
+     - libcurl-devel
+     - openssl-devel
+     - httpd-devel
+     - apr-devel
+     - apr-util-devel
+
+- name: Install Passenger repo
+  shell: curl --fail -sSLo /etc/yum.repos.d/passenger.repo https://oss-binaries.phusionpassenger.com/yum/definitions/el-passenger.repo
+
+- name: Install Passsenger
+  yum: name=mod_passenger state=installed
+
+- name: Update gem
+  shell: /usr/bin/gem update
+
+- name: Update gem system
+  shell: /usr/bin/gem update --system
+
+- name: Fix Psych gem bug
+  shell: /usr/bin/gem uninstall psych -v '2.0.13'
+
+- name: Install Bundler
+  shell: /usr/bin/gem install bundler
+
+- name: Install passenger
+  shell: /usr/bin/gem install passenger --no-rdoc --no-ri
+
+- name: Install Rails
+  shell: /usr/bin/gem install rails --no-document
+
+- name: Copy config.ru to server
+  copy: src=/home/setkeh/Dev/REA-Task/app/config.ru dest=/var/www/html/config.ru
+- name: Copy Gemfile to server
+  copy: src=/home/setkeh/Dev/REA-Task/app/Gemfile dest=/var/www/html/Gemfile
+- name: Copy helloworld.rb to server
+  copy: src=/home/setkeh/Dev/REA-Task/app/helloworld.rb dest=/var/www/html/helloworld.rb
+
+- name: Run Rails Script
+  script: /home/setkeh/Dev/REA-Task/Deploy/ansible/roles/app/files/ruby.sh bi
+
+#- name: install passenger-install-apache2-module
+#  shell: /usr/local/bin/passenger-install-apache2-module --auto creates=/usr/lib/ruby/gems/2.0.0/gems/passenger-${passenger_ver}/buildout/apache2/mod_passenger.so
+
+#- name: generate passenger.conf file
+#  shell: /usr/local/bin/passenger-install-apache2-module --snippet > /etc/httpd/conf.d/passenger.conf

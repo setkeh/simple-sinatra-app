@@ -1,0 +1,8 @@
+- name: Enable ufw and set a deny policy
+  ufw: state=enabled policy=deny
+
+- name: Allow ssh and configure brute-force rate limit protection
+  ufw: rule=limit port=ssh proto=tcp
+
+- name: Allow http traffic to app server
+  ufw: rule=allow port=80 proto=tcp

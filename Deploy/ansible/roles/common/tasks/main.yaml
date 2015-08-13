@@ -1,0 +1,23 @@
+- name: Create web group
+  group: name=www-data state=present
+
+- name: Create Web User
+  user: name=www-data shell=/sbin/nologin groups=www-data append=yes
+
+- name: Fix cloud user access
+  user: name=ubuntu groups=www-data append=yes
+
+- name: Create httpd Directory
+  file: path=/var/www state=directory mode=0777 owner=www-data group=www-data
+
+- name: Update apt cache
+  apt: update_cache=yes
+
+- name: Check if system is up to date
+  apt: upgrade=dist
+
+- name: Install system packages for basic management
+  apt: name={{ item }} state=installed
+  with_items:
+    - vim
+    - htop

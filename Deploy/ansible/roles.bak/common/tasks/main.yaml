@@ -1,0 +1,30 @@
+- name: Install epel repo
+  yum: name={{ item }} state=installed
+  with_items:
+   - https://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm
+
+- name: Check system is updated
+  yum: name=* state=installed
+
+- name: epel repository enable
+  ini_file: dest=/etc/yum.repos.d/epel.repo
+    section=epel
+    option=enabled
+    value=1
+
+- name: Install system packages
+  yum: name={{ item }} state=installed
+  with_items:
+     - httpd
+
+- name: Create web group
+  group: name=web state=present
+
+- name: Create Web User
+  user: name=web shell=/sbin/nologin groups=web append=yes
+
+- name: Fix cloud user access
+  user: name=centos groups=web append=yes
+
+- name: Create httpd Directory
+  file: path=/var/www state=directory mode=0777 owner=web group=web

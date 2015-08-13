@@ -1,0 +1,26 @@
+---
+# This playbook deploys the whole application stack in this site.  
+
+- name: apply common configuration to all nodes
+  hosts: all
+  remote_user: ubuntu
+  sudo: true
+
+  roles:
+    - common
+
+- name: Configure and deploy the application servers
+  hosts: all
+  remote_user: ubuntu
+  sudo: true
+
+  roles:
+    - app
+
+- name: Configure UFW firewall to compliment AWS (Or any other cloud service) firewall
+  hosts: all
+  remote_user: ubuntu
+  sudo: true
+
+  roles:
+    - ufw

@@ -1,0 +1,69 @@
+- name: Install application apt packages
+  apt: name={{ item }} state=latest
+  with_items:
+    - ruby-full
+    - build-essential
+    - rubygems
+    - libsqlite3-dev
+    - nodejs
+    - npm
+    - apache2
+    - apache2-prefork-dev
+    - libcurl4-openssl-dev
+    - libapache2-mod-passenger
+
+- name: Update gem
+  shell: /usr/bin/gem update
+
+- name: Update gem system
+  shell: /usr/bin/gem update --system
+
+- name: Install Bundler
+  shell: /usr/bin/gem install bundler --no-document
+
+- name: Install passenger
+  shell: /usr/bin/gem install passenger --no-document
+
+- name: Install Rails
+  shell: /usr/bin/gem install rails --no-document
+
+- name: Install Sinatra
+  shell: /usr/bin/gem install sinatra --no-document
+
+- name: Install sqlite3 gem
+  shell: /usr/bin/gem install sqlite3-ruby --no-document
+
+- name: install passenger-install-apache2-module * THIS WILL TAKE A FEW MINUTES *
+  shell: /usr/local/bin/passenger-install-apache2-module --auto creates=/var/lib/gems/2.1.0/gems/passenger-${passenger_ver}/buildout/apache2/mod_passenger.so
+
+- name: Remove conflicting passenger config root directive
+  shell: rm -rf /etc/apache2/mods-enabled/passenger.load
+
+- name: Fix Default passenger configuration options
+  copy: src=../files/passenger.conf dest=/etc/apache2/mods-enabled/passenger.conf
+
+- name: Copy config.ru to server
+  copy: src=../../../../../app/config.ru dest=/var/www/html/config.ru
+- name: Copy Gemfile to server
+  copy: src=../../../../../app/Gemfile dest=/var/www/html/Gemfile
+- name: Copy helloworld.rb to server
+  copy: src=../../../../../app/helloworld.rb dest=/var/www/html/helloworld.rb
+
+- name: Copy Apache config to server
+  copy: src=../../app/files/apache2.conf dest=/etc/apache2/apache2.conf
+- name: Copy site config to site-available
+  copy: src=../files/000-app.conf dest=/etc/apache2/sites-available/000-app.conf
+
+- name: Disable default site
+  shell: a2dissite 000-default
+
+- name: Enable app site
+  shell: a2ensite 000-app
+
+- name: Run Rails Script
+  script: ../files/ruby.sh
+
+- name: Remove Default index
+  shell: rm -rf /var/www/html/index.html
+- name: Restart Apache2
+  service: name=apache2 state=restarted
