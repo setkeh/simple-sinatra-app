@@ -48,6 +48,8 @@ The common role is designed mainly around the ability to easly extend the playbo
 
 The app role configures the Ruby, Apache and mod_passenger enviroments it also copy's some basic apache configurations to minimise the need to ssh the node on first deploy.
 
+The ufw role configure uncomplicated firewall to allow ssh traffic while limiting requests to ssh to 6 requests per 30 seconds to help protect against brute-force attacks on the ssh port, It also allows web traffic on port 80 to reach the Apache2 server. 
+
 While it was no specificly required i also wrote a bash script to interact with the AWS EC2 api and deploy basic EC2 instances.
 
 Usage:
